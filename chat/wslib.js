@@ -1,5 +1,5 @@
 const WebSocket = require("ws");
-const Message = require('./models/message');
+let db = require("./controllers/message");
 
 const clients = [];
 
@@ -17,9 +17,9 @@ const wsConnection = (server) => {
 };
 
 const sendMessages = () => {
-  Message.findAll().then((result) =>{
+  db.getMessages().then((result) => {
     clients.forEach((client) => client.send(JSON.stringify(result)));
-  }).catch((err) => console.log(err));
+  });
 };
 
 
