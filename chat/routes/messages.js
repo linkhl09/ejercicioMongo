@@ -12,17 +12,19 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/:id", (req, res) => {
-  db.getMessage(req.params.id).then((response) => {
-    if (response === null)
-      return res
-        .status(404)
-        .send("The message with the given id was not found.");
-    console.log(response);
-    res.send(response);
-  }).catch((error) => {
-    console.log(error)
-    res.status(400).send(error);
-  });
+  db.getMessage(req.params.id)
+    .then((response) => {
+      if (response === null)
+        return res
+          .status(404)
+          .send("The message with the given id was not found.");
+      console.log(response);
+      res.send(response);
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).send(error);
+    });
 });
 
 router.post("/", cors(), function (req, res, next) {
@@ -38,9 +40,15 @@ router.put("/", (req, res) => {
   const { error } = validateMessage(req.body);
 
   if (error) res.status(404).send(error);
-  else{
-  db.updateMessage(req.body).then((response) => {res.send({message: "Message updated"})}).catch((error) => {res.status(404).send({ message: "Message was not found." });});
-  ws.sendMessages();
+  else {
+    db.updateMessage(req.body)
+      .then((response) => {
+        res.send({ message: "Message updated" });
+      })
+      .catch((error) => {
+        res.status(404).send({ message: "Message was not found." });
+      });
+    ws.sendMessages();
   }
 });
 
